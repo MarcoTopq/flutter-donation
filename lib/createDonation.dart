@@ -1,11 +1,13 @@
 import 'dart:convert';
 import 'dart:io' show File;
+import 'package:donation/DetailCampaign.dart';
 import 'package:donation/main.dart';
 import 'package:donation/midtrans.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
+import 'package:toast/toast.dart';
 
 class CreateDonation extends StatefulWidget {
   final String id;
@@ -41,6 +43,9 @@ class _CreateDonationState extends State<CreateDonation>
 
   @override
   void initState() {
+    emailController.text = email;
+    nameController.text = username;
+
     super.initState();
     // this.kirimdata();
   }
@@ -59,7 +64,7 @@ class _CreateDonationState extends State<CreateDonation>
               "email": emailController.text,
               "campaign_id": widget.id,
               "donation": donationController.text,
-              "totaldonation": total,
+              "total_donation": total,
             },
             headers: headers);
     return Future.value(hasil);
@@ -269,7 +274,17 @@ class _CreateDonationState extends State<CreateDonation>
                                           json.decode(value.body);
                                       print(responseJson[
                                           'transactionRedirectUrl']);
-
+                                      // Navigator.of(context).pop();
+                                      Navigator.pushReplacement(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  Homepage()));
+                                      // Navigator.push(
+                                      //     context,
+                                      //     MaterialPageRoute(
+                                      //         builder: (context) =>
+                                      //             DetailCampaign()));
                                       Navigator.push(
                                           context,
                                           MaterialPageRoute(

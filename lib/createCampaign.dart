@@ -58,6 +58,7 @@ class _CreateCampaignState extends State<CreateCampaign>
     'PERUBAHAN',
   ];
   bool editable = true;
+  File files;
   DateTime date;
   final format = DateFormat("yyyy-MM-dd HH:mm");
   final initialValue = DateTime.now();
@@ -88,6 +89,8 @@ class _CreateCampaignState extends State<CreateCampaign>
 
   @override
   void initState() {
+    emailController.text = email;
+    fundraiserController.text = username;
     super.initState();
     myFocusNode = FocusNode();
     // this.kirimdata();
@@ -100,8 +103,8 @@ class _CreateCampaignState extends State<CreateCampaign>
     var mimeTypeData =
         lookupMimeType(file.path, headerBytes: [0xFF, 0xD8]).split('/');
 
-    var request = http.MultipartRequest(
-        "POST", Uri.parse(urls + "/campaigns/image"));
+    var request =
+        http.MultipartRequest("POST", Uri.parse(urls + "/campaigns/image"));
     // var pic = http.MultipartFile("photos", stream, length,
     //     filename: basename(file.path));
     final files = await http.MultipartFile.fromPath('photos', file.path,
@@ -125,24 +128,23 @@ class _CreateCampaignState extends State<CreateCampaign>
       'Content-Type': 'application/x-www-form-urlencoded',
       "Accept": "application/JSON",
     };
-    http.Response hasil = await http.post(
-        Uri.decodeFull(urls + "/campaigns/create"),
-        body: {
-          "fundraiser": fundraiserController.text,
-          "email": emailController.text,
-          "title": titleController.text,
-          "category": _mySelection,
-          "description": descriptionController.text,
-          "image": res['image'],
-          "current_donation": '0',
-          "total_donation": totaldonationController.text,
-          "time_limit": timelimitController.text,
-        },
-        headers: headers);
+    http.Response hasil =
+        await http.post(Uri.decodeFull(urls + "/campaigns/create"),
+            body: {
+              "fundraiser": fundraiserController.text,
+              "email": emailController.text,
+              "title": titleController.text,
+              "category": _mySelection,
+              "description": descriptionController.text,
+              "image": res['image'],
+              "current_donation": '0',
+              "total_donation": totaldonationController.text,
+              "time_limit": timelimitController.text,
+            },
+            headers: headers);
     return Future.value(hasil);
   }
 
-  List<File> files;
   @override
   Widget build(BuildContext context) {
     double a_width = MediaQuery.of(context).size.width * 0.9;
@@ -225,8 +227,8 @@ class _CreateCampaignState extends State<CreateCampaign>
                                       padding: EdgeInsets.fromLTRB(
                                           20.0, 15.0, 20.0, 15.0),
                                       onPressed: () async {
-                                        // File file = await FilePicker.getFile();
-                                        files = await FilePicker.getMultiFile();
+                                        files = await FilePicker.getFile();
+                                        // files = await FilePicker.getMultiFile();
                                         setState(() {
                                           file = 1;
                                         });
@@ -244,7 +246,7 @@ class _CreateCampaignState extends State<CreateCampaign>
                                       child: Container(
                                       padding:
                                           EdgeInsets.fromLTRB(20, 20, 20, 0),
-                                      child: Image.file(files[0]),
+                                      child: Image.file(files),
                                       // fit: BoxFit.cover,
                                       height: 200.0,
                                       alignment: Alignment.topCenter,
@@ -498,34 +500,33 @@ class _CreateCampaignState extends State<CreateCampaign>
                                   color: Colors.white,
                                   padding: EdgeInsets.fromLTRB(0, 5, 0, 0),
                                   child: DateTimeField(
-                                    format: format,
-                                    controller: timelimitController,
-                                    onShowPicker:
-                                        (context, currentValue) async {
-                                      final date = await showDatePicker(
-                                          context: context,
-                                          firstDate: DateTime(1900),
-                                          initialDate:
-                                              currentValue ?? DateTime.now(),
-                                          lastDate: DateTime(2100));
-                                      if (date != null) {
-                                        final time = await showTimePicker(
-                                          context: context,
-                                          initialTime: TimeOfDay.fromDateTime(
-                                              currentValue ?? DateTime.now()),
-                                        );
-                                        return DateTimeField.combine(
-                                            date, time);
-                                      } else {
-                                        return currentValue;
-                                      }
-                                    },
-                                    validator: (value) {
-                                    if (value == null) {
-                                      return 'Harap di isi';
-                                    }
-                                  }
-                                  )),
+                                      format: format,
+                                      controller: timelimitController,
+                                      onShowPicker:
+                                          (context, currentValue) async {
+                                        final date = await showDatePicker(
+                                            context: context,
+                                            firstDate: DateTime(1900),
+                                            initialDate:
+                                                currentValue ?? DateTime.now(),
+                                            lastDate: DateTime(2100));
+                                        if (date != null) {
+                                          final time = await showTimePicker(
+                                            context: context,
+                                            initialTime: TimeOfDay.fromDateTime(
+                                                currentValue ?? DateTime.now()),
+                                          );
+                                          return DateTimeField.combine(
+                                              date, time);
+                                        } else {
+                                          return currentValue;
+                                        }
+                                      },
+                                      validator: (value) {
+                                        if (value == null) {
+                                          return 'Harap di isi';
+                                        }
+                                      })),
                             ],
                           ),
                         ),
@@ -541,7 +542,7 @@ class _CreateCampaignState extends State<CreateCampaign>
                                     EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
                                 onPressed: () async {
                                   if (_formKey.currentState.validate()) {
-                                    kirimdata(files[0]).then((value) async {
+                                    kirimdata(files).then((value) async {
                                       if (value.statusCode == 200) {
                                         final responseJson =
                                             json.decode(value.body);

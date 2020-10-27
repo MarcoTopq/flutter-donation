@@ -222,11 +222,32 @@ class _RegisterState extends State<Register>
                                             await SharedPreferences
                                                 .getInstance();
 
+                                        prefs.setString(
+                                            'Token', responseJson['token']);
+                                        print(responseJson['user']);
+                                        prefs.setString(
+                                            'Id',
+                                            responseJson['user']['id']
+                                                .toString());
+                                        prefs.setString('Username',
+                                            responseJson['user']['username']);
+                                        prefs.setString('Email',
+                                            responseJson['user']['email']);
+                                        prefs.setString('Phone',
+                                            responseJson['user']['phone']);
+                                        prefs.setString('Password',
+                                            responseJson['user']['password']);
+                                        prefs.setString('Role',
+                                            responseJson['user']['role']);
+
+                                        print('Token  :' + prefs.get('Token'));
+                                        print('Token  :' + prefs.get('Email'));
+
                                         setState(() {
-                                          // Register = true;
-                                          // email = prefs.get('Email');
-                                          // token = prefs.get('Token');
-                                          // role =  prefs.get('Role');
+                                          login = true;
+                                          email = prefs.get('Email');
+                                          token = prefs.get('Token');
+                                          role = prefs.get('Role');
                                         });
 
                                         Navigator.pushReplacement(

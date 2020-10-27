@@ -18,29 +18,17 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-var urls = 'https://donatation-fkti.herokuapp.com';
-// var urls = 'http://192.168.1.8:3000';
+// var urls = 'https://donatation-fkti.herokuapp.com';
+var urls = 'http://192.168.1.9:3000';
 
 var email;
+var username;
 var token;
 var role;
 bool login;
 void main() => runApp(MyApp());
-// Future<void> main() async {
-//   WidgetsFlutterBinding.ensureInitialized();
-//   SharedPreferences prefs = await SharedPreferences.getInstance();
-//   email = prefs.get('Email');
-//   print(email);
-//   if (email == null) {
-//     login = false;
-//   } else {
-//     login = true;
-//   }
-//   runApp(MaterialApp(home: MyApp()));
-// }
 
 class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
@@ -99,6 +87,7 @@ class _HomepageState extends State<Homepage> {
     setState(() async {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       email = prefs.get('Email');
+      username = prefs.get('Username');
       token = prefs.get('Token');
       role = prefs.get('Role');
       if (email != null) {
@@ -154,7 +143,7 @@ class _HomepageState extends State<Homepage> {
                               return Container(
                                 child: InkWell(
                                     onTap: () {
-                                      login != true
+                                      email == null
                                           ? Navigator.push(
                                               context,
                                               MaterialPageRoute(
@@ -665,7 +654,7 @@ class _HomepageState extends State<Homepage> {
                     color: Colors.red[900],
                   ),
                 ),
-                login != true
+                email == null
                     ? Container()
                     : Container(
                         padding: EdgeInsets.only(top: 2),
@@ -742,7 +731,7 @@ class _HomepageState extends State<Homepage> {
                                 builder: (context) => AllGallerys()));
                       },
                     )),
-                role != 'admin'
+                email == null || role == 'user'
                     ? Container()
                     : Container(
                         padding: EdgeInsets.only(top: 2),

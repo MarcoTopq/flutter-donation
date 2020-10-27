@@ -51,10 +51,10 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
     double a_height = MediaQuery.of(context).size.width * 0.7;
 
     return Scaffold(
-      // backgroundColor: Colors.redAccent,
+        // backgroundColor: Colors.redAccent,
         appBar: AppBar(
           iconTheme: IconThemeData(
-            color: Colors.white, 
+            color: Colors.white,
             //change your color here
           ),
           // centerTitle: true,
@@ -175,9 +175,11 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
                                                 .getInstance();
                                         prefs.setString(
                                             'Token', responseJson['token']);
-                                         print(responseJson['user']);
+                                        print(responseJson['user']);
                                         prefs.setString(
-                                            'Id', responseJson['user']['id'].toString());
+                                            'Id',
+                                            responseJson['user']['id']
+                                                .toString());
                                         prefs.setString('Username',
                                             responseJson['user']['username']);
                                         prefs.setString('Email',
@@ -194,9 +196,10 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
 
                                         setState(() {
                                           login = true;
+                                          username = prefs.get('Username');
                                           email = prefs.get('Email');
                                           token = prefs.get('Token');
-                                          role =  prefs.get('Role');
+                                          role = prefs.get('Role');
                                         });
 
                                         Navigator.pushReplacement(

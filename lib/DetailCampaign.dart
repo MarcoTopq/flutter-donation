@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:donation/Login.dart';
 import 'package:donation/main.dart';
 import 'package:donation/createCampaign.dart';
 import 'package:donation/createDonation.dart';
@@ -260,13 +261,19 @@ class _DetailCampaignState extends State<DetailCampaign>
                   height: MediaQuery.of(context).size.height / 15,
                   child: InkWell(
                       onTap: () async {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => CreateDonation(
-                                      id: widget.id,
-                                      currentDonation: widget.currentDonation,
-                                    )));
+                        email == null
+                            ? Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => Login()))
+                            : Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => CreateDonation(
+                                          id: widget.id,
+                                          currentDonation:
+                                              widget.currentDonation,
+                                        )));
                       },
                       child: Card(
                         shape: RoundedRectangleBorder(
