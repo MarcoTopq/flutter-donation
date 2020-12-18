@@ -1,9 +1,14 @@
+import 'dart:async';
+
 import 'package:donation/Register.dart';
 import 'package:flutter/material.dart';
 import 'package:donation/main.dart';
+import 'package:rounded_loading_button/rounded_loading_button.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+
+import 'package:toast/toast.dart';
 
 class Login extends StatefulWidget {
   @override
@@ -11,7 +16,9 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
-  final _formKey = GlobalKey<FormState>();
+  final _loginKey = GlobalKey<FormState>();
+  final RoundedLoadingButtonController _btnController =
+      new RoundedLoadingButtonController();
 
   TextEditingController emailController = new TextEditingController();
   TextEditingController passwordController = new TextEditingController();
@@ -92,7 +99,7 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
                       // fontFamily: Utils.ubuntuRegularFont),
                     ))),
             Form(
-                key: _formKey,
+                key: _loginKey,
                 child: Container(
                   // width: a_width,
                   // height: a_height,
@@ -120,6 +127,7 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
                                   style: TextStyle(
                                     color: Colors.black,
                                   ),
+                                  keyboardType: TextInputType.emailAddress,
                                   decoration: InputDecoration(
                                       contentPadding: EdgeInsets.fromLTRB(
                                           20.0, 15.0, 20.0, 15.0),
@@ -153,17 +161,22 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
                                               BorderRadius.circular(2.0))),
                                 ))),
                         Padding(
-                            padding: EdgeInsets.all(20),
-                            child: Material(
-                              elevation: 5.0,
-                              borderRadius: BorderRadius.circular(30.0),
+                            padding: const EdgeInsets.all(20.0),
+                            child: RoundedLoadingButton(
+                              width: 230,
+                              child: Text(
+                                "Login",
+                                style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white),
+                              ),
                               color: Colors.red[900],
-                              child: MaterialButton(
-                                minWidth: MediaQuery.of(context).size.width,
-                                padding:
-                                    EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-                                onPressed: () async {
-                                  if (_formKey.currentState.validate()) {
+                              controller: _btnController,
+                              onPressed: () => Timer(
+                                Duration(seconds: 3),
+                                () async {
+                                  if (_loginKey.currentState.validate()) {
                                     kirimdata().then((value) async {
                                       if (value.statusCode == 200) {
                                         final responseJson =
@@ -190,7 +203,14 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
                                             responseJson['user']['password']);
                                         prefs.setString('Role',
                                             responseJson['user']['role']);
-
+                                        prefs.setString(
+                                            'Sex', responseJson['user']['sex']);
+                                        prefs.setString(
+                                            'Job', responseJson['user']['job']);
+                                        prefs.setString(
+                                            'Role',
+                                            responseJson['user']
+                                                ['domicile']);
                                         print('Token  :' + prefs.get('Token'));
                                         print('Token  :' + prefs.get('Email'));
 
@@ -208,24 +228,18 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
                                                 builder: (context) =>
                                                     Homepage()));
                                       } else {
-                                        Navigator.pushReplacement(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) => Login()));
+                                        Toast.show(
+                                            "Harap isi semua kolom", context);
+                                        _btnController.reset();
                                       }
                                     });
                                   }
                                 },
-                                child: Text("Login",
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold)),
                               ),
                             )),
                         InkWell(
                             onTap: () async {
-                              Navigator.push(
+                              Navigator.pushReplacement(
                                   context,
                                   MaterialPageRoute(
                                       builder: (context) => Register()));

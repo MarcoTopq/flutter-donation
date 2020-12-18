@@ -32,6 +32,7 @@ dependencies:
   characters: ^1.0.0
   shared_preferences: ^0.5.6+1
   provider: ^4.3.2
+  rounded_loading_button: ^1.0.0
 
 
 dev_dependencies:

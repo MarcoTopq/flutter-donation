@@ -19,7 +19,7 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 // var urls = 'https://donatation-fkti.herokuapp.com';
-var urls = 'http://192.168.1.9:3000';
+var urls = 'http://192.168.1.8:3000';
 
 var email;
 var username;
@@ -143,7 +143,7 @@ class _HomepageState extends State<Homepage> {
                               return Container(
                                 child: InkWell(
                                     onTap: () {
-                                      email == null
+                                      login == false
                                           ? Navigator.push(
                                               context,
                                               MaterialPageRoute(
@@ -654,7 +654,7 @@ class _HomepageState extends State<Homepage> {
                     color: Colors.red[900],
                   ),
                 ),
-                email == null
+                login == false
                     ? Container()
                     : Container(
                         padding: EdgeInsets.only(top: 2),
@@ -681,6 +681,9 @@ class _HomepageState extends State<Homepage> {
                                         id: prefs.get('Id'),
                                         username: prefs.get('Username'),
                                         phone: prefs.get('Phone'),
+                                        job: prefs.get('Job'),
+                                        sex: prefs.get('Sex'),
+                                        domicile: prefs.get('Domicile'),
                                         email: prefs.get('Email'),
                                         role: prefs.get('Role'),
                                         password: prefs.get('Password'))));
@@ -731,108 +734,118 @@ class _HomepageState extends State<Homepage> {
                                 builder: (context) => AllGallerys()));
                       },
                     )),
-                email == null || role == 'user'
+                login == false
                     ? Container()
-                    : Container(
-                        padding: EdgeInsets.only(top: 2),
-                        decoration: new BoxDecoration(
-                            color: Colors.black12,
-                            border: new Border(
-                                bottom:
-                                    new BorderSide(color: Colors.grey[850]))),
-                        child: ListTile(
-                          leading: Icon(Icons.people, color: Colors.red[900]),
-                          title: Text('List Users',
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.bold)),
-                          onTap: () async {
-                            SharedPreferences prefs =
-                                await SharedPreferences.getInstance();
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => Users()));
-                          },
-                        )),
-                role != 'admin'
+                    : role == 'user'
+                        ? Container()
+                        : Container(
+                            padding: EdgeInsets.only(top: 2),
+                            decoration: new BoxDecoration(
+                                color: Colors.black12,
+                                border: new Border(
+                                    bottom: new BorderSide(
+                                        color: Colors.grey[850]))),
+                            child: ListTile(
+                              leading:
+                                  Icon(Icons.people, color: Colors.red[900]),
+                              title: Text('List Users',
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.bold)),
+                              onTap: () async {
+                                SharedPreferences prefs =
+                                    await SharedPreferences.getInstance();
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => Users()));
+                              },
+                            )),
+                login == false
                     ? Container()
-                    : Container(
-                        padding: EdgeInsets.only(top: 2),
-                        decoration: new BoxDecoration(
-                            color: Colors.black12,
-                            border: new Border(
-                                bottom:
-                                    new BorderSide(color: Colors.grey[850]))),
-                        child: ListTile(
-                          leading:
-                              Icon(Icons.photo_album, color: Colors.red[900]),
+                    : role == 'user'
+                        ? Container()
+                        : Container(
+                            padding: EdgeInsets.only(top: 2),
+                            decoration: new BoxDecoration(
+                                color: Colors.black12,
+                                border: new Border(
+                                    bottom: new BorderSide(
+                                        color: Colors.grey[850]))),
+                            child: ListTile(
+                              leading: Icon(Icons.photo_album,
+                                  color: Colors.red[900]),
 
-                          title: Text('Create Gallery',
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.bold)),
-                          // isThreeLine: true,
-                          onTap: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => CreateGallery()));
-                          },
-                        )),
-                role != 'admin'
+                              title: Text('Create Gallery',
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.bold)),
+                              // isThreeLine: true,
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => CreateGallery()));
+                              },
+                            )),
+                login == false
                     ? Container()
-                    : Container(
-                        padding: EdgeInsets.only(top: 2),
-                        decoration: new BoxDecoration(
-                            color: Colors.black12,
-                            border: new Border(
-                                bottom:
-                                    new BorderSide(color: Colors.grey[850]))),
-                        child: ListTile(
-                          leading:
-                              Icon(Icons.photo_library, color: Colors.red[900]),
+                    : role == 'user'
+                        ? Container()
+                        : Container(
+                            padding: EdgeInsets.only(top: 2),
+                            decoration: new BoxDecoration(
+                                color: Colors.black12,
+                                border: new Border(
+                                    bottom: new BorderSide(
+                                        color: Colors.grey[850]))),
+                            child: ListTile(
+                              leading: Icon(Icons.photo_library,
+                                  color: Colors.red[900]),
 
-                          title: Text('Manage Gallery',
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.bold)),
-                          // isThreeLine: true,
-                          onTap: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => GallerysList()));
-                          },
-                        )),
-                role != 'admin'
+                              title: Text('Manage Gallery',
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.bold)),
+                              // isThreeLine: true,
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => GallerysList()));
+                              },
+                            )),
+                login == false
                     ? Container()
-                    : Container(
-                        padding: EdgeInsets.only(top: 2),
-                        decoration: new BoxDecoration(
-                            color: Colors.black12,
-                            border: new Border(
-                                bottom:
-                                    new BorderSide(color: Colors.grey[850]))),
-                        child: ListTile(
-                          leading: Icon(Icons.folder, color: Colors.red[900]),
+                    : role == 'user'
+                        ? Container()
+                        : Container(
+                            padding: EdgeInsets.only(top: 2),
+                            decoration: new BoxDecoration(
+                                color: Colors.black12,
+                                border: new Border(
+                                    bottom: new BorderSide(
+                                        color: Colors.grey[850]))),
+                            child: ListTile(
+                              leading:
+                                  Icon(Icons.folder, color: Colors.red[900]),
 
-                          title: Text('Manage Campaign',
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.bold)),
-                          // isThreeLine: true,
-                          onTap: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => CampaignList()));
-                          },
-                        )),
+                              title: Text('Manage Campaign',
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.bold)),
+                              // isThreeLine: true,
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => CampaignList()));
+                              },
+                            )),
                 Container(
                     padding: EdgeInsets.only(top: 2),
                     decoration: new BoxDecoration(
@@ -841,7 +854,7 @@ class _HomepageState extends State<Homepage> {
                             bottom: new BorderSide(color: Colors.grey[850]))),
                     child: ListTile(
                       leading: Icon(Icons.input, color: Colors.yellowAccent),
-                      title: login != true
+                      title: login == false
                           ? Text('Login',
                               style: TextStyle(
                                   color: Colors.white,
@@ -852,7 +865,7 @@ class _HomepageState extends State<Homepage> {
                                   color: Colors.white,
                                   fontSize: 15,
                                   fontWeight: FontWeight.bold)),
-                      onTap: login != true
+                      onTap: login == false
                           ? () async {
                               Navigator.push(
                                   context,

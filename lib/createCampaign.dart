@@ -1,7 +1,9 @@
+import 'dart:async';
 import 'dart:io' show File;
 import 'package:donation/main.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:rounded_loading_button/rounded_loading_button.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -45,6 +47,12 @@ class _CreateCampaignState extends State<CreateCampaign>
     [
       'Pendidikan',
     ],
+    [
+      'Panti Sosial Asuhan',
+    ],
+    [
+      'Pembangunan Rumah Ibadah',
+    ],
   ];
 
   List tahun = [
@@ -70,6 +78,8 @@ class _CreateCampaignState extends State<CreateCampaign>
   TextEditingController imageController = new TextEditingController();
   TextEditingController timelimitController = new TextEditingController();
   TextEditingController totaldonationController = new TextEditingController();
+  final RoundedLoadingButtonController _btnController =
+      new RoundedLoadingButtonController();
 
   FocusNode myFocusNode;
 
@@ -531,29 +541,35 @@ class _CreateCampaignState extends State<CreateCampaign>
                           ),
                         ),
                         Padding(
-                            padding: EdgeInsets.all(20),
-                            child: Material(
-                              elevation: 5.0,
-                              borderRadius: BorderRadius.circular(30.0),
+                            padding: const EdgeInsets.all(20.0),
+                            child: RoundedLoadingButton(
+                              width: 230,
+                              child: Text(
+                                "Buat Donasi",
+                                style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white),
+                              ),
                               color: Colors.red[900],
-                              child: MaterialButton(
-                                minWidth: MediaQuery.of(context).size.width,
-                                padding:
-                                    EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-                                onPressed: () async {
+                              controller: _btnController,
+                              onPressed: () => Timer(
+                                Duration(seconds: 3),
+                                () async {
                                   if (_formKey.currentState.validate()) {
                                     kirimdata(files).then((value) async {
                                       if (value.statusCode == 200) {
                                         final responseJson =
                                             json.decode(value.body);
                                         // print(responseJson['user']);
-
+                                        _btnController.reset();
                                         Navigator.pushReplacement(
                                             context,
                                             MaterialPageRoute(
                                                 builder: (context) =>
                                                     Homepage()));
                                       } else {
+                                        _btnController.reset();
                                         Navigator.pushReplacement(
                                             context,
                                             MaterialPageRoute(
@@ -561,13 +577,12 @@ class _CreateCampaignState extends State<CreateCampaign>
                                                     CreateCampaign()));
                                       }
                                     });
+                                  } else {
+                                    Toast.show(
+                                        "Harap isi semua kolom", context);
+                                    _btnController.reset();
                                   }
                                 },
-                                child: Text("Buat Donasi",
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold)),
                               ),
                             )),
                       ],

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io' show File;
 import 'package:donation/DetailCampaign.dart';
@@ -5,6 +6,7 @@ import 'package:donation/main.dart';
 import 'package:donation/midtrans.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:rounded_loading_button/rounded_loading_button.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'package:toast/toast.dart';
@@ -33,6 +35,8 @@ class _CreateDonationState extends State<CreateDonation>
   TextEditingController emailController = new TextEditingController();
   TextEditingController categoryController = new TextEditingController();
   TextEditingController donationController = new TextEditingController();
+  final RoundedLoadingButtonController _btnController =
+      new RoundedLoadingButtonController();
 
   @override
   void dispose() {
@@ -252,60 +256,66 @@ class _CreateDonationState extends State<CreateDonation>
                             )),
                         Padding(padding: EdgeInsets.all(10)),
                         Padding(
-                            padding: EdgeInsets.all(20),
-                            child: Material(
-                              elevation: 5.0,
-                              borderRadius: BorderRadius.circular(30.0),
+                            padding: const EdgeInsets.all(20.0),
+                            child: RoundedLoadingButton(
+                              width: 230,
+                              child: Text(
+                                "Donasi",
+                                style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white),
+                              ),
                               color: Colors.red[900],
-                              child: MaterialButton(
-                                minWidth: MediaQuery.of(context).size.width,
-                                padding:
-                                    EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-                                onPressed: () async {
+                              controller: _btnController,
+                              onPressed: () => Timer(
+                                Duration(seconds: 3),
+                                () async {
                                   var jum = int.parse(widget.currentDonation) +
                                       int.parse(donationController.text);
 
                                   total = jum.toString();
 
-                                  // if (_formKey.currentState.validate()) {
-                                  kirimdata().then((value) async {
-                                    if (value.statusCode == 200) {
-                                      final responseJson =
-                                          json.decode(value.body);
-                                      print(responseJson[
-                                          'transactionRedirectUrl']);
-                                      // Navigator.of(context).pop();
-                                      Navigator.pushReplacement(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  Homepage()));
-                                      // Navigator.push(
-                                      //     context,
-                                      //     MaterialPageRoute(
-                                      //         builder: (context) =>
-                                      //             DetailCampaign()));
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) => Midtrans(
-                                                  url: responseJson[
-                                                      'transactionRedirectUrl'])));
-                                    } else {
-                                      Navigator.pushReplacement(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  CreateDonation()));
-                                    }
-                                  });
-                                  // }
+                                  if (_formKey.currentState.validate()) {
+                                    kirimdata().then((value) async {
+                                      if (value.statusCode == 200) {
+                                        final responseJson =
+                                            json.decode(value.body);
+                                        print(responseJson[
+                                            'transactionRedirectUrl']);
+                                        _btnController.reset();
+                                        // Navigator.of(context).pop();
+                                        Navigator.pushReplacement(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    Homepage()));
+                                        // Navigator.push(
+                                        //     context,
+                                        //     MaterialPageRoute(
+                                        //         builder: (context) =>
+                                        //             DetailCampaign()));
+
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) => Midtrans(
+                                                    url: responseJson[
+                                                        'transactionRedirectUrl'])));
+                                      } else {
+                                        Navigator.pushReplacement(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    CreateDonation()));
+                                      }
+                                    });
+                                  } else {
+                                    Toast.show(
+                                        "Harap isi semua kolom", context);
+                                    _btnController.reset();
+                                  }
                                 },
-                                child: Text("Buat Donasi",
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold)),
                               ),
                             )),
                       ],
