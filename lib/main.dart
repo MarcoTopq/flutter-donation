@@ -18,8 +18,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-// var urls = 'https://donatation-fkti.herokuapp.com';
-var urls = 'http://192.168.1.8:3000';
+var urls = 'https://donatation-fkti.herokuapp.com';
+// var urls = 'http://192.168.1.6:3000';
 
 var email;
 var username;
@@ -87,10 +87,14 @@ class _HomepageState extends State<Homepage> {
     setState(() async {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       email = prefs.get('Email');
+      print(email);
       username = prefs.get('Username');
       token = prefs.get('Token');
       role = prefs.get('Role');
-      if (email != null) {
+      print(role);
+      if (email == null) {
+        login = false;
+      } else {
         login = true;
       }
     });
@@ -98,6 +102,7 @@ class _HomepageState extends State<Homepage> {
 
   @override
   void initState() {
+    _getToken();
     // this._getToken();
     super.initState();
     _getToken();
@@ -654,7 +659,7 @@ class _HomepageState extends State<Homepage> {
                     color: Colors.red[900],
                   ),
                 ),
-                login == false
+                email == null
                     ? Container()
                     : Container(
                         padding: EdgeInsets.only(top: 2),
@@ -734,9 +739,9 @@ class _HomepageState extends State<Homepage> {
                                 builder: (context) => AllGallerys()));
                       },
                     )),
-                login == false
+                email == null
                     ? Container()
-                    : role == 'user'
+                    : role != 'admin'
                         ? Container()
                         : Container(
                             padding: EdgeInsets.only(top: 2),
@@ -762,9 +767,9 @@ class _HomepageState extends State<Homepage> {
                                         builder: (context) => Users()));
                               },
                             )),
-                login == false
+                email == null
                     ? Container()
-                    : role == 'user'
+                    : role != 'admin'
                         ? Container()
                         : Container(
                             padding: EdgeInsets.only(top: 2),
@@ -790,9 +795,9 @@ class _HomepageState extends State<Homepage> {
                                         builder: (context) => CreateGallery()));
                               },
                             )),
-                login == false
+                email == null
                     ? Container()
-                    : role == 'user'
+                    : role != 'admin'
                         ? Container()
                         : Container(
                             padding: EdgeInsets.only(top: 2),
@@ -818,9 +823,9 @@ class _HomepageState extends State<Homepage> {
                                         builder: (context) => GallerysList()));
                               },
                             )),
-                login == false
+                email == null
                     ? Container()
-                    : role == 'user'
+                    : role != 'admin'
                         ? Container()
                         : Container(
                             padding: EdgeInsets.only(top: 2),
@@ -854,7 +859,7 @@ class _HomepageState extends State<Homepage> {
                             bottom: new BorderSide(color: Colors.grey[850]))),
                     child: ListTile(
                       leading: Icon(Icons.input, color: Colors.yellowAccent),
-                      title: login == false
+                      title: email == null
                           ? Text('Login',
                               style: TextStyle(
                                   color: Colors.white,
@@ -865,7 +870,7 @@ class _HomepageState extends State<Homepage> {
                                   color: Colors.white,
                                   fontSize: 15,
                                   fontWeight: FontWeight.bold)),
-                      onTap: login == false
+                      onTap: email == null
                           ? () async {
                               Navigator.push(
                                   context,

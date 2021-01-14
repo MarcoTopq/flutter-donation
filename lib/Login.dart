@@ -182,7 +182,7 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
                                         final responseJson =
                                             json.decode(value.body);
                                         print(responseJson);
-
+                                        _btnController.reset();
                                         SharedPreferences prefs =
                                             await SharedPreferences
                                                 .getInstance();
@@ -207,10 +207,8 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
                                             'Sex', responseJson['user']['sex']);
                                         prefs.setString(
                                             'Job', responseJson['user']['job']);
-                                        prefs.setString(
-                                            'Role',
-                                            responseJson['user']
-                                                ['domicile']);
+                                        prefs.setString('domicile',
+                                            responseJson['user']['Domicile']);
                                         print('Token  :' + prefs.get('Token'));
                                         print('Token  :' + prefs.get('Email'));
 
