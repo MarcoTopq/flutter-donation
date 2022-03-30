@@ -18,7 +18,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-var urls = 'https://donatation-fkti.herokuapp.com';
+var urls = 'https://donasi.gaoverse.us';
 // var urls = 'http://192.168.1.6:3000';
 
 var email;
